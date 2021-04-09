@@ -5,7 +5,7 @@ import nltk
 from random import choice
 
 # tokenni ruyxatdan utkazish
-bot = telebot.TeleBot("1791602674:AAE5fFNB9-ees55kiCZdtWZxRab3NSrEFH0", parse_mode=None)
+bot = telebot.TeleBot("1791602674:AAHOUOS89Ubrj1Z07VWJWjr8lOHqCRQja9Y", parse_mode=None)
 
 find = ''
 gintents = ''
@@ -63,11 +63,15 @@ BOT_CONFIG ={
         "intents" :
            {
                "hello_men" : {
-                       "examples" : ["Salom","sava","qonday","buloptimi","tinchmi","mazang qalay","qanneysan","qanaqasan","🙋‍♂️"] ,
-                       "answers"  : ["Salomaleykum","Va aleykum as-salom","qandaysan","qalaysan"],},
+                       "examples" : ["Salom","sava","qonday","buloptimi","tinchmi","mazang qalay","qanneysan","qanaqasan"],
+                       "answers"  : ["Salomaleykum yaxshimisiz","Va aleykum as-salom zurmisiz","qandaysan","qalaysan"],},
+               "salomdan_keyin":{
+                       "examples" : ["yaxshi","zur","ajoyib","xursandman"],
+                       "answers"  : ["xursand buldim","sog bul doim😊"],
+                   },
                "hello_women":{
                        "examples" : ["Assalom","qalisan","qalisiz","🙋‍♀️","Assalomu aleykum"],
-                       "answer"  : ["Xayrli kun","🙋‍♀️","ishlariz joyidami"],  },
+                       "answers"  : ["Xayrli kun","🙋‍♀️","ishlariz joyidami"],  },
                "bye_men"   : {
                         "examples" : ["bye","bupti","kurishamiz","gaplashamiz"],
                         "answers"  : ["kurishguncha","xayr","kechroq gaplashamiz"],
@@ -92,7 +96,7 @@ def handle_start_help(message):
         print("foydalanuvchi starni bosdi")
         bot.reply_to(message, "qonday ishlar ")
    
-    elif(message.text == '/help'):
+    elif(message.text == 'help'):
         print("helpni bosdi")
         bot.reply_to(message, "qonday yordam kerak ")
     elif(message.text == '/intents'):
