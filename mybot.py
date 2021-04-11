@@ -3,14 +3,37 @@ import telebot
 from pprint import pprint
 import nltk
 from random import choice
+import json
 
 # tokenni ruyxatdan utkazish
 bot = telebot.TeleBot("1791602674:AAE5fFNB9-ees55kiCZdtWZxRab3NSrEFH0", parse_mode=None)
 
 find = ''
-gintent = ''
+gintents = ''
 gexamples = ''
 ganswers = ''
+# file load from json
+
+def file_open(arg):
+    if (arg == 'uz'):
+        with open('uz.json','r') as f:
+            BOT_CONFIG = json.load(f)
+            print(f)
+    else:
+        with open('ru.json','r') as f:
+            BOT_CONFIG = json.load(f)
+            print(f)
+
+# function for file upload and create
+
+def file_save(arg):
+    if (arg == 'uz'):
+        with open('uz.json','w') as f:
+            json.dump(BOT_CONFIG,f)
+    else:
+        with open('ru.json','w') as f:
+            json.dump(BOT_CONFIG,f)
+
 
 def filter(text):  #filter funksiyasi
     text = text.lower()
@@ -25,14 +48,22 @@ def get_answer_by_intent(intent): # javob izlash funksiyasi
 def add_answers(message):
     chat_id = message.chat.id
     answers = (message.text).split()
+    global BOT_CONFIG
+    global gexamples
+    global ganswers
+    ganswers = answers
+    BOT_CONFIG["intents"][gintents]= '{ "examples" : ['+",".join(gexamples)+' ], "answers : [ '+",".join(answers)+' ]"}' 
     pprint(BOT_CONFIG)
+    text = 'Yangi intent muvofaqiyatli kiritildi sizni tabrikliyman!'
+    bot.send_message(message.chat.id,text)
 
 def add_examples(message):
     chat_id = message.chat.id
     examples = (message.text).split()
     global BOT_CONFIG
-    BOT_CONFIG["intents"][intent]= '{ "examples" : [] , "answers : [ ]"}'
-    pprint(BOT_CONFIG)
+    global gexamples
+    gexamples = examples
+    BOT_CONFIG["intents"][gintents]= '{ "examples" : ['+",".join(gexamples)+' ], "answers : [ ]"}' 
     msg = bot.reply_to(message, 'Endi Javob variantlarini kiriting! masalan : salom assalom hello hi ')
     bot.register_next_step_handler(msg, add_answers)
 
@@ -40,9 +71,10 @@ def add_examples(message):
 def add_intents(message):
     chat_id = message.chat.id
     intent = message.text
-    global BOT_CONFIG , gintents
+    global BOT_CONFIG
+    global gintents
     BOT_CONFIG["intents"][intent]= '{ "examples" : [] , "answers : [ ]"}'
-    pprint(BOT_CONFIG)
+    gintents = intent
     msg = bot.reply_to(message, 'Endi intentni barcha ehtimolini kiriting!')
     bot.register_next_step_handler(msg, add_examples)
     
@@ -80,9 +112,7 @@ BOT_CONFIG ={
 @bot.message_handler(commands=['start','help','intents'])
 def handle_start_help(message):
     if(message.text == '/start'):
-        print("foydalanuvchi starni bosdi")
-        bot.reply_to(message, "qonday ishlar ")
-   
+        file_save('uz')   
     elif(message.text == '/help'):
         print("helpni bosdi")
         bot.reply_to(message, "qonday yordam kerak ")
