@@ -6,26 +6,25 @@ from random import choice
 import json
 
 # tokenni ruyxatdan utkazish
-bot = telebot.TeleBot("1748606537:AAHwPzN-WCc7R0tn_0LpIiU00XnlSMlwfCU", parse_mode=None)
-BOT_CONFIG = {}
+bot = telebot.TeleBot("1242724893:AAFDauEH7EOOAQLEojulFOtH0hW6NkRomGM", parse_mode=None)
 find = ''
 gintents = ''
 gexamples = ''
 ganswers = ''
 
+
 # file load from json
 
 def file_open(arg):
+    global BOT_CONFIG
     if (arg == 'uz'):
         with open('uz.json','r') as f:
-            global BOT_CONFIG
+            
             BOT_CONFIG = json.load(f)
-            print(BOT_CONFIG['intents'])
-            print(BOT_CONFIG.keys())
     else:
         with open('ru.json','r') as f:
             BOT_CONFIG = json.load(f)
-            print(BOT_CONFIG)
+
 
 # function for file upload and create
 
@@ -51,40 +50,43 @@ def get_answer_by_intent(intent): # javob izlash funksiyasi
 
 def add_answers(message):
     chat_id = message.chat.id
-    answers = (message.text).split(',')
+    answer_line = message.text
+    answers = (answer_line).split(',')
     global BOT_CONFIG
     global gexamples
     global ganswers
+    global gintents   
     ganswers = answers
-    BOT_CONFIG["intents"][gintents]= '{ "examples" : ['+",".join(gexamples)+' ], "answers : [ '+",".join(answers)+' ]"}' 
+    BOT_CONFIG["intents"][gintents] = { "examples" : [] , "answers" : [] }
+    for item in gexamples:
+        BOT_CONFIG["intents"][gintents]["examples"].append(item)
+    for item in ganswers:
+        BOT_CONFIG["intents"][gintents]["answers"].append(item)
+    
     file_save('uz')
     text = 'Yangi intent muvofaqiyatli kiritildi sizni tabrikliyman!'
     bot.send_message(message.chat.id,text)
 
 def add_examples(message):
     chat_id = message.chat.id
-    examples = (message.text).split(',')
-    global BOT_CONFIG
+    examples_line = message.text
+    examples = (examples_line).split(',')
     global gexamples
     gexamples = examples
-    BOT_CONFIG["intents"][gintents]= '{ "examples" : ['+",".join(gexamples)+' ], "answers : [ ]"}' 
     msg = bot.reply_to(message, 'Endi Javob variantlarini kiriting! masalan : salom assalom hello hi ')
     bot.register_next_step_handler(msg, add_answers)
 
     
 def add_intents(message):
     chat_id = message.chat.id
-    intent = message.text
-    global BOT_CONFIG
+    intent = str(message.text)
     global gintents
-    BOT_CONFIG["intents"][intent]= '{ "examples" : [] , "answers : [ ]"}'
     gintents = intent
     msg = bot.reply_to(message, 'Endi intentni barcha ehtimolini kiriting!')
     bot.register_next_step_handler(msg, add_examples)
     
 
 # biz hozir start comandasi va help comandasini qaytaishlaymiz
-
 
 @bot.message_handler(commands=['start','help','intents'])
 def handle_start_help(message):
@@ -113,6 +115,7 @@ def get_intent(message):
     text = filter(text)
     global BOT_CONFIG
     global find
+    file_open('uz')
     for intent, value in BOT_CONFIG["intents"].items():
         for example in value["examples"]:
             example = filter(example)
@@ -129,8 +132,4 @@ def get_intent(message):
         bot.reply_to(message,  failer)
         find = 'topdi'
     
-                
-                
-                
-
 bot.polling()
