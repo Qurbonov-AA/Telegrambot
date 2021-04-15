@@ -4,15 +4,22 @@ from pprint import pprint
 import nltk
 from random import choice
 import json
+from gtts import gTTS # text dan mp3 qib beradi
 
 # tokenni ruyxatdan utkazish
-bot = telebot.TeleBot("1242724893:AAFDauEH7EOOAQLEojulFOtH0hW6NkRomGM", parse_mode=None)
+bot = telebot.TeleBot("1748606537:AAF0Qr1Kq7BBgxAPOCeMXYyBnwvWCla9VjI", parse_mode=None)
 find = ''
 gintents = ''
 gexamples = ''
 ganswers = ''
 
+# from text to mp3
 
+def get_mp3(text):
+    tts = gTTS(text)
+    tts.save('audios/'+text+'.mp3')
+
+        
 # file load from json
 
 def file_open(arg):
@@ -111,11 +118,12 @@ def handle_text_doc(message):
 @bot.message_handler(content_types=['text'])
 
 def get_intent(message):
+    audio_ans = ''
     text = message.text
     text = filter(text)
     global BOT_CONFIG
     global find
-    file_open('uz')
+    file_open('uz')    
     for intent, value in BOT_CONFIG["intents"].items():
         for example in value["examples"]:
             example = filter(example)
@@ -123,13 +131,20 @@ def get_intent(message):
                 distance = nltk.edit_distance(text,example)/len(example)           
             if (example == text or distance <= 0.2):
                 print(f" Sizni suxbatdoshiz  {intent} {distance}")
-                bot.reply_to(message,  get_answer_by_intent(intent))          
-                find = 'topdi'
+                audio_ans = get_answer_by_intent(intent)
+                if (len(audio_ans) >= 0):
+                    #bot.reply_to(message,  audio_ans)
+                    get_mp3(audio_ans)
+                    audio = open('audios/'+audio_ans+'.mp3', 'rb')
+                    bot.send_audio(message.chat.id, audio)
+                    find = 'topdi'
             
     
     if(find != 'topdi'):
         failer = choice(BOT_CONFIG["failer_phrases"])
-        bot.reply_to(message,  failer)
+        get_mp3(failer)
+        #bot.reply_to(message,  failer)
         find = 'topdi'
-    
+        audio = open('audios/'+failer+'.mp3', 'rb')
+        bot.send_audio(message.chat.id, audio)
 bot.polling()
