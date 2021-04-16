@@ -16505,5 +16505,6 @@
             "Попробуем поговорить позже?"
          ]
       }
-   }
+   },
+   "failer_phrases": ["tushunarli qilib yozing inson ", "man bot man xolos tushunarli yozing", "nima demoqchiligingizni tushunmadim", "balkim uziz javob berarsiz"]
 }
