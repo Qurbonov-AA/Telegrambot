@@ -5,6 +5,7 @@ import nltk
 from random import choice
 import json
 from gtts import gTTS # text dan mp3 qib beradi
+from telebot import types
 
 # tokenni ruyxatdan utkazish
 bot = telebot.TeleBot("1748606537:AAF0Qr1Kq7BBgxAPOCeMXYyBnwvWCla9VjI", parse_mode=None)
@@ -12,11 +13,12 @@ find = ''
 gintents = ''
 gexamples = ''
 ganswers = ''
+lang = 'uz'
 
 # from text to mp3
 
 def get_mp3(text):
-    tts = gTTS(text)
+    tts = gTTS(text,lang=lang)
     tts.save('audios/'+text+'.mp3')
 
         
@@ -25,11 +27,10 @@ def get_mp3(text):
 def file_open(arg):
     global BOT_CONFIG
     if (arg == 'uz'):
-        with open('uz.json','r') as f:
-            
+        with open('uz.json','r',encoding='UTF8') as f:            
             BOT_CONFIG = json.load(f)
     else:
-        with open('ru.json','r') as f:
+        with open('ru.json','r',encoding='UTF8') as f:
             BOT_CONFIG = json.load(f)
 
 
@@ -46,7 +47,7 @@ def file_save(arg):
 
 def filter(text):  #filter funksiyasi
     text = text.lower()
-    text = [c for c in text if c in 'abdefghijklmnopqrstuvxz -']
+    text = [c for c in text if c in 'abdefghijklmnopqrstuvxzйцукенгшщзхъфывапролджэячсмитьбюё -']
     text = "".join(text) # alfabit harflaridan boshqa simvollarni uchiradi
     return text
 
@@ -97,7 +98,8 @@ def add_intents(message):
 
 @bot.message_handler(commands=['start','help','intents'])
 def handle_start_help(message):
-    file_open('uz')
+    global lang
+    file_open(lang)
     if(message.text == '/start'):
         bot.reply_to(message, "Suhbatlashamizmi???")    
     elif(message.text == '/help'):
@@ -107,23 +109,35 @@ def handle_start_help(message):
         text = "Yangi maqsadni nomini kiriting!"
         bot.send_message(message.chat.id, text)
         bot.register_next_step_handler(message, add_intents)
-    
-@bot.message_handler(content_types=['document'])
+    markup = types.ReplyKeyboardMarkup(row_width=2) 
+    uz = types.KeyboardButton('uz')
+    ru = types.KeyboardButton('ru')
+    markup.add(uz, ru) 
+    bot.send_message(message.chat.id, "Tilni tanlang", reply_markup=markup) 
 
-def handle_text_doc(message):
-    file_open('uz')
+
+    
+@bot.message_handler(content_types=['audio','voice'])
+
+def handle_text_audio(message):
+    print(message)
     bot.reply_to(message, "Men telegram bot man va fayllar bilan ishlay olmayman!?")    
 # ikkinchi dars python da textlar va spiskalar bilan ishlash
-# 
-@bot.message_handler(content_types=['text'])
 
+@bot.message_handler(content_types=['text'])
 def get_intent(message):
     audio_ans = ''
     text = message.text
     text = filter(text)
     global BOT_CONFIG
     global find
-    file_open('uz')    
+    global lang
+    if (message.text == 'uz'):
+        lang = 'uz'
+        file_open('uz')
+    else:
+        lang = 'ru'
+        file_open('ru')
     for intent, value in BOT_CONFIG["intents"].items():
         for example in value["examples"]:
             example = filter(example)
@@ -147,4 +161,6 @@ def get_intent(message):
         find = 'topdi'
         audio = open('audios/'+failer+'.mp3', 'rb')
         bot.send_audio(message.chat.id, audio)
+
+        
 bot.polling()
