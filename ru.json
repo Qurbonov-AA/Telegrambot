@@ -9769,7 +9769,7 @@
          ]
       },
       "quit": {
-         "inc_examples": [
+         "examples": [
             "Пока",
             "До свидания",
             "Прощай",
@@ -9778,7 +9778,7 @@
             "До следующей встречи",
             "Буду рад видеть Вас снова"
          ],
-         "out_answers": [
+         "answers": [
             "Пока",
             "До свидания",
             "Прощай",
@@ -9789,44 +9789,44 @@
          ]
       },
       "alanguages": {
-         "inc_examples": [
+         "examples": [
             "Какие существуют языки программирования?"
          ],
-         "out_answers": [
+         "answers": [
             "Существуют такие языки, как: Python, Java, Javascript, PHP, Ruby, Perl, C#, C++, Swift, Go"
          ]
       },
       "language": {
-         "inc_examples": [
+         "examples": [
             "На каком языке ты написан?"
          ],
-         "out_answers": [
+         "answers": [
             "Я написан на языке Python"
          ]
       },
       "story": {
-         "inc_examples": [
+         "examples": [
             "Расскажи мне о Python"
          ],
-         "out_answers": [
+         "answers": [
             "История языка программирования Python началась в конце 1980-х. Гвидо ван Россум задумал Python в 1980-х годах, а приступил к его созданию в декабре 1989 года в центре математики и информатики в Нидерландах"
          ]
       },
       "potential": {
-         "inc_examples": [
+         "examples": [
             "Могу ли я научиться писать код на Python?"
          ],
-         "out_answers": [
+         "answers": [
             "Да",
             "Конечно!",
             "Безусловно"
          ]
       },
       "how": {
-         "inc_examples": [
+         "examples": [
             "Как я могу это сделать?"
          ],
-         "out_answers": [
+         "answers": [
             "Ты можешь научить этому в онлайн-школе Skillbox!"
          ]
       },
